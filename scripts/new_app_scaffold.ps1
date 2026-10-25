@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Generate CPU app skeleton (embedded-c skill): copy template + fill header placeholders.
+  Generate a Vitis CPU app skeleton from the platform template and fill header placeholders.
 
 .DESCRIPTION
   Project/device/date/tool placeholders are filled. Public author metadata is fixed in the SPDX header.
