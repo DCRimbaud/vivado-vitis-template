@@ -1,0 +1,60 @@
+# SPDX-License-Identifier: MIT
+# Author: Xue Weisen <xueweisen96@gmail.com>
+# GitHub: https://github.com/DCRimbaud
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  rtl-and-tcl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install simulation and Tcl tools
+        run: sudo apt-get update && sudo apt-get install -y iverilog tcl
+      - name: Run AXI-Lite testbench
+        run: |
+          iverilog -g2012 -o /tmp/tb_axi_lite_regs fpga/rtl/axi_lite_regs.v fpga/rtl/tb_axi_lite_regs.sv
+          vvp /tmp/tb_axi_lite_regs
+      - name: Check Tcl parse completeness
+        run: tclsh scripts/check_tcl_syntax.tcl
+      - name: Compile AXI-Lite firmware adapter
+        run: |
+          git clone --depth 1 https://github.com/DCRimbaud/embedded-c-kit.git /tmp/embedded-c-kit
+          gcc -std=c99 -Wall -Wextra -Wpedantic -Werror \
+            -I /tmp/embedded-c-kit/include -I fpga/firmware \
+            -c fpga/firmware/axi_lite_client.c -o /tmp/axi_lite_client.o
+
+  templates:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse PowerShell scripts
+        shell: pwsh
+        run: |
+          $failed = $false
+          foreach ($file in Get-ChildItem scripts -Filter *.ps1) {
+            try {
+              [void][scriptblock]::Create((Get-Content -LiteralPath $file.FullName -Raw))
+            } catch {
+              Write-Host "FAIL: $($file.FullName): $($_.Exception.Message)"
+              $failed = $true
+            }
+          }
+          if ($failed) { exit 1 }
+      - name: Check template quality
+        shell: pwsh
+        run: ./scripts/check_template_quality.ps1
+      - name: Smoke-generate a FreeRTOS skeleton
+        shell: pwsh
+        run: |
+          $dest = Join-Path $env:RUNNER_TEMP "vitis-template-smoke"
+          ./scripts/new_app_scaffold.ps1 -Platform zynq_freertos -Dest $dest `
+            -Project Smoke -Device xc7z020clg400-1 -ToolVersions "Vitis 2025.2" -Force
+          if (-not (Test-Path (Join-Path $dest "main.c"))) { throw "main.c was not generated" }
+          if (-not (Test-Path (Join-Path $dest "plt\rtos\freertos\plt_rtos_freertos.c"))) { throw "FreeRTOS backend was not generated" }
