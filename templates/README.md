@@ -12,8 +12,8 @@ OSAL boundaries, and board-configuration ownership.
 
 ## Placeholder policy
 
-The skeleton files use `__PROJECT__`, `__DEVICE__`, `__DATE__`,
-`__TOOL_VERSIONS__`, and identity placeholders. Replace them only after choosing
+The skeleton files use `__PROJECT__`, `__DEVICE__`, `__DATE__`, and `__TOOL_VERSIONS__` placeholders.
+Replace them only after choosing
 the target BSP and reviewing the generated `xparameters.h`.
 
 Use the generator:
