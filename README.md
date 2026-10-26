@@ -4,6 +4,13 @@ A reusable reference for creating a clean FPGA-to-software platform with AMD Viv
 It complements the [Embedded C Kit](https://github.com/DCRimbaud/embedded-c-kit) and
 [.NET Serial Toolkit](https://github.com/DCRimbaud/dotnet-serial-toolkit).
 
+## Related repositories
+
+- [DCRimbaud/embedded-c-kit](https://github.com/DCRimbaud/embedded-c-kit) - portable C buffers, MMIO,
+  logging, transfer ownership, and Xilinx UARTLite adapter.
+- [DCRimbaud/dotnet-serial-toolkit](https://github.com/DCRimbaud/dotnet-serial-toolkit) - C# serial
+  transport, command execution, diagnostics, JSONL, and architecture gates.
+
 ## What is included
 
 - MicroBlaze bare-metal application skeleton
@@ -72,8 +79,8 @@ addresses safely.
 
 The firmware files under `templates/` are engineering source snapshots and intentionally preserve the
 original contract comments and placeholders. Public repository documentation and newly added platform
-integration code are written in English. Replace every `__PROJECT__`, `__DEVICE__`, `__DATE__`,
-`__TOOL_VERSIONS__`, and identity placeholder before committing generated project code.
+integration code are written in English. Replace every `__PROJECT__`, `__DEVICE__`, `__DATE__`, and
+`__TOOL_VERSIONS__` placeholder before committing generated project code.
 
 ## Safety boundary
 
